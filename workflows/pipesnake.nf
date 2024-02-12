@@ -423,9 +423,13 @@ workflow PIPESNAKE {
         ch_all_trees
     )
 
-    ASTER(
-        MERGE_TREES.out.merged_trees
-    )
+    if (!params.no_tree_merge){
+        ASTER(
+            MERGE_TREES.out.merged_trees
+        )
+        ch_versions = ch_versions.mix(ASTER.out.versions)
+    }
+    
 
 
      if (params.stage.toLowerCase() != "from-prg"){
@@ -457,12 +461,12 @@ workflow PIPESNAKE {
     ch_versions = ch_versions.mix(SED.out.versions)
     ch_versions = ch_versions.mix(BBMAP_REFORMAT2.out.versions)
     ch_versions = ch_versions.mix(MERGE_TREES.out.versions)
-    ch_versions = ch_versions.mix(ASTER.out.versions)
+    
 
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
+    //CUSTOM_DUMPSOFTWAREVERSIONS (
+    //    ch_versions.unique().collectFile(name: 'collated_versions.yml')
+    //)
     
 }
 
