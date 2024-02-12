@@ -4,7 +4,7 @@ process BBMAP_DEDUPE {
     conda "bioconda::bbmap=39.01"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/bbmap:39.01--h5c4e2a8_0':
-        'biocontainers/bbmap:39.01--h5c4e2a8_0' }"
+        'quay.io/biocontainers/bbmap:39.01--h5c4e2a8_0' }"
 
     input:
     tuple val(sample_id), path (fastq) //, val(meta)
@@ -29,7 +29,7 @@ process BBMAP_DEDUPE {
     }
 
     """
-    dedupe.sh -Xmx${avail_mem}M ${input}  out=${sample_id}_deduped.${task.ext.fastq_suffix}.gz outd=${sample_id}_duplicates.${task.ext.fastq_suffix}.gz ${task.ext.args} threads=${task.cpus} 
+    dedupe.sh -Xmx${avail_mem}M ${input}  out=${sample_id}_deduped.${task.ext.fastq_suffix}.gz outd=${sample_id}_duplicates.${task.ext.fastq_suffix}.gz ${task.ext.args} threads=auto 
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

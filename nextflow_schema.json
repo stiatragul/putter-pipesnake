@@ -43,6 +43,14 @@
             "description": "Reference genome and and Blat Database related files and options required for the workflow.",
             "required": ["blat_db"],
             "properties": {
+                "stage": {
+                    "type": "string",
+                    "description": "The stage to start the workflow from ('from-start' or 'from-prg'). By default the workflow runs 'from-start' meaning it looks for a sample info file with paths to raw reads. If '--stage from-prg' is specified the workflow looks for a modified sample info file with paths to PRG files.",
+                    "help_text": ".",
+                    "fa_icon": "fas fa-question-circle",
+                    "default": "from-start",
+                    "enum": ["from-start", "from-prg"]
+                },
                 "filter": {
                     "type": "string",
                     "format": "file-path",
@@ -93,6 +101,12 @@
                     "type": "boolean",
                     "description": "Trinity generates large number of intermediate files which can be an issue for some HPCs that limits the file number for each user. This option will make trinity writes to `/tmp` directory on the compute node then copy the compressed output directory (not the fasta) to the workdirectory to avoid this issue.",
                     "default": true,
+                    "fa_icon": "fas fa-question-circle"
+                },
+                "no_tree_merge": {
+                    "type": "boolean",
+                    "description": "Do not merge all trees at the end.",
+                    "default": false,
                     "fa_icon": "fas fa-question-circle"
                 }
                 

@@ -5,7 +5,7 @@ process BBMAP_REFORMAT2 {
     conda "bioconda::bbmap=39.01"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/bbmap:39.01--h5c4e2a8_0':
-        'biocontainers/bbmap:39.01--h5c4e2a8_0' }"
+        'quay.io/biocontainers/bbmap:39.01--h5c4e2a8_0' }"
 
     input:
     path(fasta_ls) //, val(meta)
@@ -26,7 +26,7 @@ process BBMAP_REFORMAT2 {
     """
     for fasta in ${fasta_ls.join(' ')}; do
         file_base_name="\$(basename -- "\$fasta")"
-        reformat.sh -Xmx${avail_mem}M in=\${fasta} out=\${file_base_name}.fasta threads=${task.cpus} ${task.ext.args}
+        reformat.sh -Xmx${avail_mem}M in=\${fasta} out=\${file_base_name}.fasta threads=auto ${task.ext.args}
     done
 
     cat <<-END_VERSIONS > versions.yml

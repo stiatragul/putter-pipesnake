@@ -4,7 +4,7 @@ tag "$sample_id"
     conda "bioconda::bbmap=39.01"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/bbmap:39.01--h5c4e2a8_0':
-        'biocontainers/bbmap:39.01--h5c4e2a8_0' }"
+        'quay.io/biocontainers/bbmap:39.01--h5c4e2a8_0' }"
 
     input:
     tuple val(sample_id), path(fastq_r1), path(fastq_r2)
@@ -31,7 +31,7 @@ tag "$sample_id"
         ref=${reference_genome} \
         outm1=${sample_id}_R1_bbmap.${task.ext.fastq_suffix}.gz \
         outm2=${sample_id}_R2_bbmap.${task.ext.fastq_suffix}.gz \
-        ${task.ext.args} threads=${task.cpus}
+        ${task.ext.args} threads=auto
 						
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -5,7 +5,7 @@ process MAFFT {
     conda "bioconda::mafft=7.520"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mafft:7.520--hec16e2b_0':
-        'biocontainers/mafft:7.520--hec16e2b_0' }"
+        'quay.io/biocontainers/mafft:7.520--hec16e2b_0' }"
 
 
     input:
@@ -19,7 +19,7 @@ process MAFFT {
     """
     for fasta in ${fasta_ls.join(' ')}; do
         f_out="\$(basename -- "\$fasta" | sed 's/\\(.*\\)\\..*/\\1/')"
-        mafft ${task.ext.args} \${fasta} > \${f_out}.fasta.aln  
+        mafft --thread -1 ${task.ext.args} \${fasta} > \${f_out}.fasta.aln  
 
     done
 

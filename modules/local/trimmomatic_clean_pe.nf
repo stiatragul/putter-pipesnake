@@ -4,7 +4,7 @@ process TRIMMOMATIC_CLEAN_PE {
     conda "bioconda::trimmomatic=0.39"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/trimmomatic:0.39--hdfd78af_2':
-        'biocontainers/trimmomatic:0.39--hdfd78af_2' }"
+        'quay.io/biocontainers/trimmomatic:0.39--hdfd78af_2' }"
 
 
     input:
@@ -20,7 +20,6 @@ process TRIMMOMATIC_CLEAN_PE {
     
     """
     trimmomatic PE \
-        -threads  ${task.cpus} \
         ${fastq1} \
         ${fastq2} \
         ${sample_id}_R1_paired_trimmed_cleaned.${task.ext.fastq_suffix}.gz \
