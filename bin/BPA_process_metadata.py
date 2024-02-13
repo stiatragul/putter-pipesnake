@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 import os
+import re
 
 """
 Ian Brennan
@@ -96,10 +97,10 @@ def BPA_sample_info(args):
     file_ids = pd.DataFrame({
         "filename": seq_files,
         "sample_id": seq_files.apply(lambda x: x.split("_")[0]),
-        "barcode": seq_files.apply(lambda x: x.split("_")[4]),  # was [2]
-        "sample_no": seq_files.apply(lambda x: x.split("_")[5]),  # was [3]
-        "lane_no": seq_files.apply(lambda x: x.split("_")[6]),  # was [4]
-        "direction": seq_files.apply(lambda x: x.split("_")[7])  # was [7]
+        "barcode": seq_files.apply(lambda x: re.search(r'_([ATGC]+)_', x).group(1)),  # combination of ATGC
+        "sample_no": seq_files.apply(lambda x: re.search(r'_(S[0-9]+)_', x).group(1)), #S can only be 1 or 2 surrounded by _
+        "lane_no": seq_files.apply(lambda x: re.search(r'_(L[0-9]+)_', x).group(1) if re.search(r'_(L[0-9]+)_', x) else np.nan), 
+        "direction": seq_files.apply(lambda x: re.search(r'_(R[12])_', x).group(1)) #R can only be 1 or 2 surrounded by _
     })
 
     # Read in the sample metadata file
@@ -147,23 +148,24 @@ def BPA_sample_info(args):
     samp_info = []
     
     # Run a loop across the file_id_combo file making a traditional sample_info.csv file
-    for lane in no_lanes:
-        curr_lane = file_id_combo[file_id_combo["lane_no"] == lane]
-        for samp in no_samps:
-            curr_samp = curr_lane[curr_lane["sample_id"] == samp]
-            
-            # Check if curr_samp is not empty before accessing values
-            if not curr_samp.empty:
-                samp_info.append({
-                    "sample_id": samp,
-                    "read1": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R1", "filename"].values[0]),
-                    "read2": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R2", "filename"].values[0]),
-                    "barcode1": curr_samp.loc[curr_samp["direction"] == "R1", "barcode"].values[0],
-                    "barcode2": curr_samp.loc[curr_samp["direction"] == "R2", "barcode"].values[0],
-                    "adaptor1": args.adaptor1,
-                    "adaptor2": args.adaptor2,
-                    "lineage": curr_samp["lineage"].values[0]
-                })
+    #for lane in no_lanes:
+    #    curr_lane = file_id_combo[file_id_combo["lane_no"] == lane]
+    for samp in no_samps:
+        curr_samp = file_id_combo[file_id_combo["sample_id"] == samp]
+        #curr_samp = curr_lane[curr_lane["sample_id"] == samp]
+        
+        # Check if curr_samp is not empty before accessing values
+        if not curr_samp.empty:
+            samp_info.append({
+                "sample_id": samp,
+                "read1": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R1", "filename"].values[0]),
+                "read2": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R2", "filename"].values[0]),
+                "barcode1": curr_samp.loc[curr_samp["direction"] == "R1", "barcode"].values[0],
+                "barcode2": curr_samp.loc[curr_samp["direction"] == "R2", "barcode"].values[0],
+                "adaptor1": args.adaptor1,
+                "adaptor2": args.adaptor2,
+                "lineage": curr_samp["lineage"].values[0]
+            })
     
     # Convert the list of dictionaries to a DataFrame
     samp_info = pd.DataFrame(samp_info)
