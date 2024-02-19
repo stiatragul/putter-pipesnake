@@ -30,7 +30,7 @@ for filename in os.listdir(fasta_directory):
     if filename.endswith(".fasta"):  # Assuming fasta file extension is .fasta
         file_path = os.path.join(fasta_directory, filename)
         counts = count_sample_headers(file_path)
-        counts["file name"] = filename
+        counts["file name"] = filename[:-6]
         counts["Total"] = counts["Gene"] + (counts["AHE"] + counts["UCE"])
         counts_list.append(counts)
 
@@ -44,4 +44,4 @@ counts_df = counts_df[["file name", "AHE", "UCE", "Gene", "Total"]]
 output_csv = "PRG_stats.csv"
 counts_df.to_csv(output_csv, index=False)
 
-print("CSV file saved successfully kak.")
+print("CSV file saved successfully in the dir you run this command.")
