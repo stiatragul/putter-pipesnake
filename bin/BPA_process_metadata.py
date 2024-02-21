@@ -98,9 +98,9 @@ def BPA_sample_info(args):
         "filename": seq_files,
         "sample_id": seq_files.apply(lambda x: x.split("_")[0]),
         "barcode": seq_files.apply(lambda x: re.search(r'_([ATGC]+)_', x).group(1)),  # combination of ATGC
-        "sample_no": seq_files.apply(lambda x: re.search(r'_(S[0-9]+)_', x).group(1)), #S can only be 1 or 2 surrounded by _
+        # "sample_no": seq_files.apply(lambda x: re.search(r'_(S[0-9]+)_', x).group(1)), #S can only be 1 or 2 surrounded by _
         "lane_no": seq_files.apply(lambda x: re.search(r'_(L[0-9]+)_', x).group(1) if re.search(r'_(L[0-9]+)_', x) else np.nan), 
-        "direction": seq_files.apply(lambda x: re.search(r'_(R[12])_', x).group(1)) #R can only be 1 or 2 surrounded by _
+        "direction": seq_files.apply(lambda x: re.search(r'_(R[12])', x).group(1)) #R can only be 1 or 2 surrounded by _
     })
 
     # Read in the sample metadata file
@@ -186,3 +186,5 @@ process_bpa_metadata(args)
 
 # call the function with the provided arguments
 BPA_sample_info(args)
+
+print("Check that three .csv files have been created in your dir.")
