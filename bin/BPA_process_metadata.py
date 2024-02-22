@@ -114,7 +114,7 @@ def BPA_sample_info(args):
     info["lineage"] = info["genus"] + "_" + info["species"] + "_" + info["specimen_id"]
     info["adaptor1"] = args.adaptor1
     info["adaptor2"] = args.adaptor2
-    
+    # print(info)
     # Split files into two dataframes to merge later
     file_ids_f = file_ids[file_ids["direction"] == "R1"].copy()
     file_ids_r = file_ids[file_ids["direction"] == "R2"].copy()
@@ -176,8 +176,6 @@ def BPA_sample_info(args):
     # Write the sample info dataframe to file
     samp_info.to_csv("BPA_SampleInfo.csv", index=False)
 
-
-
 # Retrieve command-line arguments
 args = get_args()
 
@@ -188,3 +186,29 @@ process_bpa_metadata(args)
 BPA_sample_info(args)
 
 print("Check that three .csv files have been created in your dir.")
+
+### CHECK FOR DUPLICATES and potential issues
+
+# Read the CSV file into a pandas DataFrame
+df = pd.read_csv("./BPA_SampleInfo.csv")
+column_name = "lineage"
+
+# Find duplicate values in the specified column
+duplicate_rows = df[df.duplicated(subset=[column_name], keep=False)]
+
+# Find rows with issues in the specified column
+issue_rows = df[df[column_name].str.contains(r'[()\\\/ ]', na=False)]
+
+if duplicate_rows.empty:
+    print(f"No duplicate values found in column '{column_name}'.")
+
+else:
+    print(f"WARNING: Duplicates found in column '{column_name}':")
+    print(duplicate_rows[column_name])
+
+if issue_rows.empty:
+    print(f"No issues found in column '{column_name}'.")
+
+else:
+    print(f"WARNING: Issues found, you might need to manually adjust BPA_SampleInfo.csv in column '{column_name}':")
+    print(issue_rows[column_name])
