@@ -23,7 +23,7 @@ def run_pipeline(alignment_path, num_loci):
         print(sorted_df[['path', 'ntax', 'missing_data']].head(num_loci))
 
         # Create new directory for subset of files that have max ntaxa and min missing data
-        subset_dir = os.path.join(os.path.dirname(alignment_path) + "_subset")
+        subset_dir = os.path.join(os.path.dirname(alignment_path), os.path.basename(alignment_path) + "_subset")
         os.makedirs(subset_dir, exist_ok=True)
 
         # Copy top files to subset directory
@@ -36,7 +36,7 @@ def run_pipeline(alignment_path, num_loci):
     subprocess.run(["segul", "align", "concat", "--dir", subset_dir, "--input-format", "fasta", "--output", "segul_cat", "--prefix", output_prefix, "--output-format", "fasta"])
 
     # Move all folders starting with "segul_" to a new folder
-    topo_test_folder = os.path.join(os.path.dirname(alignment_path) + "_topotest")
+    topo_test_folder = os.path.join(os.path.dirname(alignment_path), os.path.basename(alignment_path) + "_topotest")
     os.makedirs(topo_test_folder, exist_ok=True)
     for item in os.listdir('.'):
         if os.path.isdir(item) and item.startswith('segul_'):
