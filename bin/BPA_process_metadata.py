@@ -107,6 +107,7 @@ def BPA_sample_info(args):
     info = pd.read_csv(args.pmf)
     info["sample_id"] = info["library_id"].apply(lambda x: x.split("/")[1])
     info["specimen_id"] = info["specimen_id"].str.replace(" ", "_")
+    info["species"] = info["species"].str.replace(" ", ".") # replace spaces in species with .to prevent issues
     info = info[["library_id", "genus", "species", "specimen_id", "library_index_seq", "library_index_seq_dual", "sample_id"]]
     #info.rename(columns={"library_index_seq": "library_index_seq_P7", "library_index_seq_dual": "library_index_seq_P5"}, inplace=True)
     
@@ -114,7 +115,7 @@ def BPA_sample_info(args):
     info["lineage"] = info["genus"] + "_" + info["species"] + "_" + info["specimen_id"]
     info["adaptor1"] = args.adaptor1
     info["adaptor2"] = args.adaptor2
-    # print(info)
+    
     # Split files into two dataframes to merge later
     file_ids_f = file_ids[file_ids["direction"] == "R1"].copy()
     file_ids_r = file_ids[file_ids["direction"] == "R2"].copy()
@@ -134,7 +135,7 @@ def BPA_sample_info(args):
     # Combine the f/r file info together
     file_id_combo = pd.concat([file_ids_f, file_ids_r])
     file_id_combo = file_id_combo[["filename", "sample_id", "direction", "lane_no", "barcode", "adaptor", "lineage"]]
-    
+
     ####
     
     # Write the file_id_combo to file
@@ -212,3 +213,4 @@ if issue_rows.empty:
 else:
     print(f"WARNING: Issues found, you might need to manually adjust BPA_SampleInfo.csv in column '{column_name}':")
     print(issue_rows[column_name])
+    print(f"Make sure to fix before submitting")
