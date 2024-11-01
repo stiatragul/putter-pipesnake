@@ -2,6 +2,7 @@ import argparse
 import pandas as pd
 import os
 import re
+import numpy as np
 
 """
 Ian Brennan
@@ -97,8 +98,9 @@ def BPA_sample_info(args):
     file_ids = pd.DataFrame({
         "filename": seq_files,
         "sample_id": seq_files.apply(lambda x: x.split("_")[0]),
-        "barcode": seq_files.apply(lambda x: re.search(r'_([ATGC]+)_', x).group(1)),  # combination of ATGC
-        # "sample_no": seq_files.apply(lambda x: re.search(r'_(S[0-9]+)_', x).group(1)), #S can only be 1 or 2 surrounded by _
+        # "barcode": seq_files.apply(lambda x: re.search(r'_([ATGC]+)_', x).group(1)),  # combination of ATGC
+        "barcode": seq_files.apply(lambda x: re.search(r'_([ATGC-]+)_', x).group(1)),  # combination of ATGC with - for dual index
+        "sample_no": seq_files.apply(lambda x: re.search(r'_(S[0-9]+)_', x).group(1)), #Sample number S surrounded by _
         "lane_no": seq_files.apply(lambda x: re.search(r'_(L[0-9]+)_', x).group(1) if re.search(r'_(L[0-9]+)_', x) else np.nan), 
         "direction": seq_files.apply(lambda x: re.search(r'_(R[12])', x).group(1)) #R can only be 1 or 2 surrounded by _
     })
@@ -134,6 +136,7 @@ def BPA_sample_info(args):
     
     # Combine the f/r file info together
     file_id_combo = pd.concat([file_ids_f, file_ids_r])
+    # file_id_combo = file_id_combo[["filename", "sample_id", "direction", "lane_no", "adaptor", "lineage"]]
     file_id_combo = file_id_combo[["filename", "sample_id", "direction", "lane_no", "barcode", "adaptor", "lineage"]]
 
     ####
@@ -161,8 +164,8 @@ def BPA_sample_info(args):
                 "sample_id": samp,
                 "read1": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R1", "filename"].values[0]),
                 "read2": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R2", "filename"].values[0]),
-                "barcode1": curr_samp.loc[curr_samp["direction"] == "R1", "barcode"].values[0],
-                "barcode2": curr_samp.loc[curr_samp["direction"] == "R2", "barcode"].values[0],
+                # "barcode1": curr_samp.loc[curr_samp["direction"] == "R1", "barcode"].values[0],
+                # "barcode2": curr_samp.loc[curr_samp["direction"] == "R2", "barcode"].values[0],
                 "adaptor1": args.adaptor1,
                 "adaptor2": args.adaptor2,
                 "lineage": curr_samp["lineage"].values[0]
