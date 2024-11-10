@@ -164,8 +164,8 @@ def BPA_sample_info(args):
                 "sample_id": samp,
                 "read1": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R1", "filename"].values[0]),
                 "read2": os.path.join(indir, curr_samp.loc[curr_samp["direction"] == "R2", "filename"].values[0]),
-                # "barcode1": curr_samp.loc[curr_samp["direction"] == "R1", "barcode"].values[0],
-                # "barcode2": curr_samp.loc[curr_samp["direction"] == "R2", "barcode"].values[0],
+                "barcode1": curr_samp.loc[curr_samp["direction"] == "R1", "barcode"].values[0],
+                "barcode2": curr_samp.loc[curr_samp["direction"] == "R2", "barcode"].values[0],
                 "adaptor1": args.adaptor1,
                 "adaptor2": args.adaptor2,
                 "lineage": curr_samp["lineage"].values[0]
